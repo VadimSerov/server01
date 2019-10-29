@@ -1,6 +1,8 @@
+const io = require('socket.io');
 const http=require('http');
 const fs = require('fs');
 const server=http.createServer();
+var ios = io.listen(server);
 
 port = 80;
 host = 'localhost';
@@ -64,4 +66,14 @@ server.on('request',function(request,response){
 
 server.listen(port,host,function(){
 	console.log('Сервер работает. Слушает хост:',host,' ,  порт:',port)
+});
+n_disconnect=0
+ios.sockets.on('connection', function (socket) {
+	socket.on('eventServer', function (data) {
+		console.log(data);
+		socket.emit('eventClient', { "data": 'Hello Client! You send: '+data });
+	});
+	socket.on('disconnect', function () {
+		//console.log('user disconnected',n_disconnect++);
+	});
 });
